@@ -1,55 +1,55 @@
-import 'hardhat-typechain'
-import '@nomiclabs/hardhat-ethers'
-import '@nomiclabs/hardhat-waffle'
-import '@nomiclabs/hardhat-etherscan'
-import 'hardhat-contract-sizer'
-import 'hardhat-deploy'
-import { resolve } from 'path'
-import { config as dotenvConfig } from 'dotenv'
-dotenvConfig({ path: resolve(__dirname, './.env') })
+import "hardhat-typechain";
+import "@nomiclabs/hardhat-ethers";
+import "@nomiclabs/hardhat-waffle";
+import "@nomiclabs/hardhat-etherscan";
+import "hardhat-contract-sizer";
+import "hardhat-deploy";
+import { resolve } from "path";
+import { config as dotenvConfig } from "dotenv";
+dotenvConfig({ path: resolve(__dirname, "./.env") });
 
 const LOW_OPTIMIZER_COMPILER_SETTINGS = {
-  version: '0.7.6',
+  version: "0.7.6",
   settings: {
     optimizer: {
       enabled: true,
       runs: 1_00,
     },
     metadata: {
-      bytecodeHash: 'none',
+      bytecodeHash: "none",
     },
   },
-}
+};
 
 const LOWEST_OPTIMIZER_COMPILER_SETTINGS = {
-  version: '0.7.6',
+  version: "0.7.6",
   settings: {
     optimizer: {
       enabled: true,
       runs: 1_00,
     },
     metadata: {
-      bytecodeHash: 'none',
+      bytecodeHash: "none",
     },
   },
-}
+};
 
 const DEFAULT_COMPILER_SETTINGS = {
-  version: '0.7.6',
+  version: "0.7.6",
   settings: {
     optimizer: {
       enabled: true,
       runs: 1_00,
     },
     metadata: {
-      bytecodeHash: 'none',
+      bytecodeHash: "none",
     },
   },
-}
+};
 
 export default {
   networks: {
-    hardhat: {      
+    hardhat: {
       allowUnlimitedContractSize: false,
     },
     mainnet: {
@@ -92,14 +92,18 @@ export default {
       url: `https://api.avax.network/ext/bc/C/rpc`,
       accounts: [`0x${process.env.PRIVATE_KEY}`],
     },
+    energitest: {
+      url: `https://nodeapi.test.energi.network/v1/jsonrpc`,
+      accounts: [`0x${process.env.PRIVATE_KEY}`],
+    },
   },
   etherscan: {
     // Your API key for Etherscan
     // Obtain one at https://etherscan.io/
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
-  paths:{
-    sources: 'src'
+  paths: {
+    sources: "src",
   },
   contractSizer: {
     alphaSort: true,
@@ -109,4 +113,4 @@ export default {
   namedAccounts: {
     deployer: 0,
   },
-}
+};
