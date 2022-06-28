@@ -12,8 +12,8 @@ Good Luck!
 
 
 # Instructions to deploy smart contract on energi testnet
-cd SmartContracts
-cp .env.example .env
-nano .env
-yarn install
-yarn deploy --network energitest
+- cd SmartContracts
+- cp .env.example .env
+- nano .env
+- yarn install
+- yarn deploy --network energitest
