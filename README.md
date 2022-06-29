@@ -17,3 +17,5 @@ Good Luck!
 - nano .env
 - yarn install
 - yarn deploy --network energitest
+# Testing Smart contract
+- yarn bid-test

@@ -4,15 +4,12 @@
 // It will be used by the Solidity compiler to validate its version.
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./TransferHelper.sol";
 import "./SafeMath.sol";
-import "./ERC20Interface.sol";
 
 contract BiddingWar is Ownable {
     using SafeMath for uint256;
-    address public NRG;
     uint256 public bidEndTime = 60 minutes;
-    uint256 public maxBidInterval = 10 minutes;
+    uint256 public maxBidInterval = 10 minutes; //10 minutes;
     uint256 public commission = 50; // 50 = 5%
     bool public startBidding = false;
     uint256 public startTime;
@@ -20,6 +17,9 @@ contract BiddingWar is Ownable {
     uint256 public curBidTime;
     address public lastBidder;
     uint256 public gameIndex = 0;
+    uint256 private _totalCommissionAmount;
+    uint256 public totalWinnerAmount = 0;
+
     modifier gameRunning() {
         require(checkGameRunning(), "game ended");
         _;
@@ -35,20 +35,20 @@ contract BiddingWar is Ownable {
         uint256 maxBidInterval,
         uint256 commission
     );
-    event NRGTokenAddressUpdated(address token);
     event Bid(
         uint256 ganeIndex,
         address bidder,
         uint256 bidAmount,
         uint256 bidTime
     );
+    event PaymentReceived(address from, uint256 amount);
 
     function checkGameRunning() public view returns (bool) {
         uint256 currentTime = block.timestamp;
         if (
             startBidding &&
             currentTime < startTime.add(bidEndTime) &&
-            currentTime < curBidTime.add(maxBidInterval)
+            (curBidAmount ==0  || currentTime > curBidTime.add(maxBidInterval))
         ) return true;
         else return false;
     }
@@ -61,19 +61,14 @@ contract BiddingWar is Ownable {
         startBidding = true;
         lastBidder = address(0);
         gameIndex = gameIndex + 1;
+        totalWinnerAmount = 0;
         emit GameStarted(gameIndex, startTime);
     }
 
     function rewardToWinner() public onlyOwner gameEnded {
-        uint256 rewards = ERC20Interface(NRG).balanceOf(address(this));
-        TransferHelper.safeTransfer(NRG, lastBidder, rewards);
-        emit WinnerGetRewards(gameIndex, lastBidder, rewards);
+        payable(lastBidder).transfer(totalWinnerAmount);
+        emit WinnerGetRewards(gameIndex, lastBidder, totalWinnerAmount);
         start();
-    }
-
-    function setTokenAddress(address token) public onlyOwner {
-        NRG = token;
-        emit NRGTokenAddressUpdated(token);
     }
 
     function setGameParams(
@@ -81,27 +76,33 @@ contract BiddingWar is Ownable {
         uint256 _maxBidInterval,
         uint256 _commission
     ) public onlyOwner {
+        require(_commission < 1000, "commission overflow");
         bidEndTime = _bidEndTime;
         maxBidInterval = _maxBidInterval;
         commission = _commission;
-        require(commission < 1000, "commission overflow");
         emit GameParamChanged(bidEndTime, maxBidInterval, commission);
     }
 
-    function bid(uint256 bidAmount) external gameRunning {
-        require(bidAmount > curBidAmount, "bid amount is less than before");
+    function bid() external payable gameRunning {
+        require(msg.value > curBidAmount, "bid amount is less than before");
         lastBidder = msg.sender;
-        TransferHelper.safeTransferFrom(
-            NRG,
-            lastBidder,
-            address(this),
-            bidAmount
-        );
         // send commistion to owner
-        uint256 commissionAmount = bidAmount.mul(commission).div(1000);
-        TransferHelper.safeTransfer(NRG, owner(), commissionAmount);
+        uint256 commissionAmount = msg.value.mul(commission).div(1000);
+        _totalCommissionAmount = _totalCommissionAmount.add(commissionAmount);
         curBidTime = block.timestamp;
-        curBidAmount = bidAmount;
-        emit Bid(gameIndex, lastBidder, bidAmount, curBidTime);
+        curBidAmount = msg.value;
+        totalWinnerAmount = totalWinnerAmount.add(msg.value).sub(
+            commissionAmount
+        );
+        emit Bid(gameIndex, lastBidder, msg.value, curBidTime);
+    }
+
+    function withdraw(address toAddress) public onlyOwner {
+        payable(toAddress).transfer(_totalCommissionAmount);
+        _totalCommissionAmount = 0;
+    }
+
+    receive() external payable virtual {
+        emit PaymentReceived(msg.sender, msg.value);
     }
 }

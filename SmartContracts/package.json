@@ -12,8 +12,8 @@
     "console": "hardhat console",
     "verify": "hardhat verify",
     "start": "hardhat run",
-    "flatten": "hardhat flatten src/BiddingWar.sol > BiddingWar.flatten.sol"
-    
+    "flatten": "hardhat flatten src/BiddingWar.sol > BiddingWar.flatten.sol",    
+    "bid-test": "hardhat run scripts/bidding.test.js"
   },
   "repository": {
     "type": "git",
