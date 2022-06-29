@@ -11,7 +11,8 @@
     "deploy": "hardhat deploy",
     "console": "hardhat console",
     "verify": "hardhat verify",
-    "start": "hardhat run"
+    "start": "hardhat run",
+    "flatten": "hardhat flatten src/BiddingWar.sol > BiddingWar.flatten.sol"
     
   },
   "repository": {
@@ -30,7 +31,7 @@
   },
   "homepage": "https://github.com/nomiclabs/hardhat-hackathon-boilerplate#readme",
   "devDependencies": {
-    "@openzeppelin/contracts": "^3.x",
+    "@openzeppelin/contracts": "^4.3.2",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.1",
     "@nomiclabs/hardhat-waffle": "^2.0.1",

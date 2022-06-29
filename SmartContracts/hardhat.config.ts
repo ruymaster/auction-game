@@ -113,4 +113,17 @@ export default {
   namedAccounts: {
     deployer: 0,
   },
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.9",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },
+    ],
+  },
 };
