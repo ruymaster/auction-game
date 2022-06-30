@@ -29,7 +29,8 @@ Good Luck!
 	  	-H 'authorization: Basic YWRtaW46MTIz' \
 	  	-H 'content-type: application/json' \
 	  	-d '{"value":"admin"}'
-
+		
+# Once game is started, backend will restart game automatically
 
 
 
