@@ -2,7 +2,12 @@ module bidding/server
 
 go 1.18
 
-require github.com/umbracle/ethgo v0.1.3
+require (
+	github.com/ethereum/go-ethereum v1.10.19
+	github.com/gin-gonic/gin v1.8.1
+	github.com/joho/godotenv v1.4.0
+	github.com/umbracle/ethgo v0.1.3
+)
 
 require (
 	github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 // indirect
@@ -14,9 +19,7 @@ require (
 	github.com/chenzhijie/go-web3 v0.0.0-20220624054921-160d25d06af6 // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
-	github.com/ethereum/go-ethereum v1.10.19 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/gin-gonic/gin v1.8.1 // indirect
 	github.com/go-ole/go-ole v1.2.1 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
@@ -26,7 +29,6 @@ require (
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/uuid v1.2.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
-	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.10.7 // indirect
 	github.com/klauspost/cpuid v1.2.0 // indirect

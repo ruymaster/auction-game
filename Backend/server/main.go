@@ -15,7 +15,6 @@ func setupRouter() *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	r := gin.Default()
-	// fmt.Println("--- ", os.Getenv("BID_CONTRACT_ADDRESS"))
 	// Get user value
 	r.GET("/user/:name", func(c *gin.Context) {
 		user := c.Params.ByName("name")
