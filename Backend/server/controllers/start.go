@@ -2,12 +2,18 @@ package controllers
 
 import (
 	"bidding/server/utils"
+	"context"
+	"crypto/ecdsa"
 	"fmt"
+	"log"
 	"math/big"
 	"os"
 
-	"github.com/chenzhijie/go-web3"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/joho/godotenv"
 )
 
 func handleErr(err error) {
@@ -17,22 +23,54 @@ func handleErr(err error) {
 }
 
 func StartGame() {
-	newWeb3, err := web3.NewWeb3(utils.RpcUrl)
+	err := godotenv.Load(".env")
 
-	newWeb3.Eth.SetAccount(os.Getenv("OWNER_KEY"))
-	newWeb3.Eth.SetChainId(int64(utils.ChainId))
-	contract, err := newWeb3.Eth.NewContract(`[{"type":"function","stateMutability":"nonpayable","outputs":[],"name":"start","inputs":[]}]`, utils.BidContractAddress)
-	startInputData, err := contract.Methods("start").Inputs.Pack(nil)
-
-	txHash, err := newWeb3.Eth.SyncSendRawTransaction(
-		common.HexToAddress(utils.BidContractAddress),
-		big.NewInt(0),
-		300000,
-		newWeb3.Utils.ToGWei(200),
-		startInputData,
-	)
 	if err != nil {
-		panic(err)
+		log.Fatal("Error loading .env file")
 	}
-	fmt.Printf("---start transaction", txHash.TxHash)
+
+	client, err := ethclient.Dial(utils.RpcUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	privateKey, err := crypto.HexToECDSA(os.Getenv("OWNER_KEY"))
+	publicKey := privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		log.Fatal("error casting public key to ECDSA")
+	}
+
+	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+
+	biddingContractAddress := common.HexToAddress(utils.BidContractAddress)
+	instance, err := NewBiddingwar(biddingContractAddress, client)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, big.NewInt(int64(utils.ChainId)))
+	if err != nil {
+	}
+	nonce, err := client.PendingNonceAt(context.Background(), fromAddress)
+	if err != nil {
+	}
+	auth.Nonce = big.NewInt(int64(nonce))
+
+	gasPrice, err := client.SuggestGasPrice(context.Background())
+	if err != nil {
+
+	}
+	auth.GasPrice = gasPrice
+	auth.GasLimit = 300000
+	auth.Value = big.NewInt(int64(0))
+
+	tx, err := instance.Start(auth)
+
+	totalWinnerAmount, err := instance.TotalWinnerAmount(nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(totalWinnerAmount, fromAddress.String(), tx.Hash().String()) // "1.0"
 }

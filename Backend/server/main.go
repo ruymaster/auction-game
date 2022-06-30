@@ -2,9 +2,9 @@ package main
 
 import (
 	"net/http"
+	// "os"
 
 	"bidding/server/controllers"
-	"bidding/server/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,7 +15,7 @@ func setupRouter() *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	r := gin.Default()
-
+	// fmt.Println("--- ", os.Getenv("BID_CONTRACT_ADDRESS"))
 	// Get user value
 	r.GET("/user/:name", func(c *gin.Context) {
 		user := c.Params.ByName("name")
@@ -44,7 +44,7 @@ func setupRouter() *gin.Engine {
 	  	http://localhost:8080/admin/start \
 	  	-H 'authorization: Basic YWRtaW46MTIz \
 	  	-H 'content-type: application/json' \
-	  	-d '{"value":"bar"}'
+	  	-d '{"value":"admin"}'
 
 		this will be changed in signing way by owner key, on live version.
 	*/
@@ -67,7 +67,7 @@ func setupRouter() *gin.Engine {
 
 func main() {
 	r := setupRouter()
-	utils.TotalBidAmount()
+	// utils.TotalBidAmount()
 
 	// Listen and Server in 0.0.0.0:8080
 	r.Run(":8080")
