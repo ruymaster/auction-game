@@ -1,14 +1,10 @@
-# Blockchain Challenge
+## Game Mechanics
 
-Welcome the Energi Blockchain Challenge.
-
-The instructions for the task are in #1.
-
-To communicate with a reviewer, make sure to open a merge request and ask questions.
-
-Your access to this repo will be rescinded in the _next 72 hours_.
-
-Good Luck!
+1. The bidding starts with 0 NRG and 60 minutes countdown.
+2. Every next bid has to be higher than the previous one.
+3. For each bid, the time extends for 10 minutes.
+4. When the time runs out, the winner is the last bidder.
+5. The reward is all the funds that were accumulated.
 
 
 # Instructions to deploy smart contract on energi testnet
